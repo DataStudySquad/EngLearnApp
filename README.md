@@ -9,6 +9,10 @@ git add <file_name>
 git commit -m 'msg'
 
 git push origin
+
+# create new branch
+git checkout -b <new_branch>
+
 ```
 
 ## Ref
