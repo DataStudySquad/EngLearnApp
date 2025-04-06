@@ -3,7 +3,7 @@
     <div class="practice-container">
       <div class="word-display">
         <h2>Listen and Type the Word</h2>
-        <button @click="playWord" class="play-button">
+        <button @click="playWord" class="play-button" :disabled="isPlaying">
           <span class="play-icon">🔊</span> Play Word
         </button>
       </div>
@@ -13,10 +13,10 @@
           v-model="userInput" 
           @keyup.enter="checkAnswer"
           placeholder="Type the word here..."
-          :disabled="!isPlaying"
           class="word-input"
+          ref="wordInput"
         >
-        <button @click="checkAnswer" class="submit-button">Submit</button>
+        <button @click="checkAnswer" class="submit-button" :disabled="!userInput.trim()">Submit</button>
       </div>
 
       <div class="result-section" v-if="showResult">
@@ -41,18 +41,23 @@ export default {
   data() {
     return {
       words: [
-        { word: 'apple', audio: 'https://ssl.gstatic.com/dictionary/static/sounds/oxford/a--_gb_1.mp3' },
-        { word: 'banana', audio: 'https://ssl.gstatic.com/dictionary/static/sounds/oxford/b--_gb_1.mp3' },
-        { word: 'orange', audio: 'https://ssl.gstatic.com/dictionary/static/sounds/oxford/o--_gb_1.mp3' },
-        { word: 'grape', audio: 'https://ssl.gstatic.com/dictionary/static/sounds/oxford/g--_gb_1.mp3' },
-        { word: 'mango', audio: 'https://ssl.gstatic.com/dictionary/static/sounds/oxford/m--_gb_1.mp3' }
+        { word: 'apple' },
+        { word: 'banana' },
+        { word: 'orange' },
+        { word: 'grape' },
+        { word: 'mango' },
+        { word: 'computer' },
+        { word: 'phone' },
+        { word: 'book' },
+        { word: 'pencil' },
+        { word: 'desk' }
       ],
       currentWordIndex: 0,
       userInput: '',
       showResult: false,
       isCorrect: false,
       isPlaying: false,
-      audio: null
+      speechSynthesis: null
     }
   },
   computed: {
@@ -62,23 +67,34 @@ export default {
   },
   methods: {
     playWord() {
+      if (this.isPlaying) return
+      
       this.isPlaying = true
       this.showResult = false
-      this.userInput = ''
       
-      if (this.audio) {
-        this.audio.pause()
+      // Cancel any ongoing speech
+      if (this.speechSynthesis) {
+        window.speechSynthesis.cancel()
       }
-      
-      this.audio = new Audio(this.words[this.currentWordIndex].audio)
-      this.audio.play()
-      
-      this.audio.onended = () => {
+
+      // Create new speech utterance
+      const utterance = new SpeechSynthesisUtterance(this.currentWord)
+      utterance.lang = 'en-US'
+      utterance.rate = 0.8
+      utterance.pitch = 1
+      utterance.volume = 1
+
+      // Handle speech end
+      utterance.onend = () => {
         this.isPlaying = false
       }
+
+      // Speak the word
+      window.speechSynthesis.speak(utterance)
+      this.speechSynthesis = utterance
     },
     checkAnswer() {
-      if (!this.isPlaying) return
+      if (!this.userInput.trim()) return
       
       this.showResult = true
       this.isCorrect = this.userInput.toLowerCase().trim() === this.currentWord
@@ -88,6 +104,28 @@ export default {
       this.showResult = false
       this.userInput = ''
       this.isPlaying = false
+      
+      // Cancel any ongoing speech
+      if (this.speechSynthesis) {
+        window.speechSynthesis.cancel()
+      }
+      
+      // Focus the input field
+      this.$nextTick(() => {
+        this.$refs.wordInput.focus()
+      })
+    }
+  },
+  mounted() {
+    // Focus the input field when component is mounted
+    this.$nextTick(() => {
+      this.$refs.wordInput.focus()
+    })
+  },
+  beforeDestroy() {
+    // Clean up speech synthesis when component is destroyed
+    if (this.speechSynthesis) {
+      window.speechSynthesis.cancel()
     }
   }
 }
@@ -122,7 +160,12 @@ export default {
   transition: background-color 0.3s;
 }
 
-.play-button:hover {
+.play-button:disabled {
+  background-color: #a8d5c2;
+  cursor: not-allowed;
+}
+
+.play-button:not(:disabled):hover {
   background-color: #3aa876;
 }
 
@@ -154,7 +197,12 @@ export default {
   font-size: 1rem;
 }
 
-.submit-button:hover {
+.submit-button:disabled {
+  background-color: #a8c7e2;
+  cursor: not-allowed;
+}
+
+.submit-button:not(:disabled):hover {
   background-color: #357abd;
 }
 
