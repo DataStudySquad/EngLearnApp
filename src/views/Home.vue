@@ -76,7 +76,7 @@ export default {
       isPlaying: false,
       speechSynthesis: null,
       recentWords: [],
-      usedIndices: new Set()
+      availableIndices: []
     }
   },
   computed: {
@@ -85,18 +85,21 @@ export default {
     }
   },
   methods: {
-    getRandomWordIndex() {
-      if (this.usedIndices.size === this.words.length) {
-        this.usedIndices.clear()
+    shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
       }
-      
-      let randomIndex
-      do {
-        randomIndex = Math.floor(Math.random() * this.words.length)
-      } while (this.usedIndices.has(randomIndex))
-      
-      this.usedIndices.add(randomIndex)
-      return randomIndex
+    },
+    initializeAvailableIndices() {
+      this.availableIndices = Array.from({ length: this.words.length }, (_, i) => i);
+      this.shuffleArray(this.availableIndices);
+    },
+    getNextWordIndex() {
+      if (this.availableIndices.length === 0) {
+        this.initializeAvailableIndices();
+      }
+      return this.availableIndices.pop();
     },
     playWord() {
       if (this.isPlaying) return
@@ -143,7 +146,7 @@ export default {
       }
     },
     nextWord() {
-      this.currentWordIndex = this.getRandomWordIndex()
+      this.currentWordIndex = this.getNextWordIndex()
       this.showResult = false
       this.userInput = ''
       this.isPlaying = false
@@ -160,6 +163,8 @@ export default {
     }
   },
   mounted() {
+    // Initialize available indices when component is mounted
+    this.initializeAvailableIndices()
     // Focus the input field when component is mounted
     this.$nextTick(() => {
       this.$refs.wordInput.focus()
