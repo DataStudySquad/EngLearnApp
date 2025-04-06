@@ -32,6 +32,18 @@
         <button @click="nextWord" class="next-button">Next Word</button>
       </div>
     </div>
+
+    <div class="history-container">
+      <h3>Recent Words</h3>
+      <div class="history-list">
+        <div v-for="(word, index) in recentWords" :key="index" class="history-item">
+          <span class="word-text">{{ word.word }}</span>
+          <span :class="['result-indicator', word.correct ? 'correct' : 'incorrect']">
+            {{ word.correct ? '✓' : '✗' }}
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -50,14 +62,21 @@ export default {
         { word: 'phone' },
         { word: 'book' },
         { word: 'pencil' },
-        { word: 'desk' }
+        { word: 'desk' },
+        { word: 'laptop' },
+        { word: 'chair' },
+        { word: 'table' },
+        { word: 'window' },
+        { word: 'door' }
       ],
       currentWordIndex: 0,
       userInput: '',
       showResult: false,
       isCorrect: false,
       isPlaying: false,
-      speechSynthesis: null
+      speechSynthesis: null,
+      recentWords: [],
+      usedIndices: new Set()
     }
   },
   computed: {
@@ -66,6 +85,19 @@ export default {
     }
   },
   methods: {
+    getRandomWordIndex() {
+      if (this.usedIndices.size === this.words.length) {
+        this.usedIndices.clear()
+      }
+      
+      let randomIndex
+      do {
+        randomIndex = Math.floor(Math.random() * this.words.length)
+      } while (this.usedIndices.has(randomIndex))
+      
+      this.usedIndices.add(randomIndex)
+      return randomIndex
+    },
     playWord() {
       if (this.isPlaying) return
       
@@ -98,9 +130,20 @@ export default {
       
       this.showResult = true
       this.isCorrect = this.userInput.toLowerCase().trim() === this.currentWord
+      
+      // Add to recent words history
+      this.recentWords.unshift({
+        word: this.currentWord,
+        correct: this.isCorrect
+      })
+      
+      // Keep only the last 5 words
+      if (this.recentWords.length > 5) {
+        this.recentWords.pop()
+      }
     },
     nextWord() {
-      this.currentWordIndex = (this.currentWordIndex + 1) % this.words.length
+      this.currentWordIndex = this.getRandomWordIndex()
       this.showResult = false
       this.userInput = ''
       this.isPlaying = false
@@ -133,16 +176,65 @@ export default {
 
 <style scoped>
 .home {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  display: flex;
+  gap: 2rem;
 }
 
 .practice-container {
+  flex: 2;
   background-color: white;
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.history-container {
+  flex: 1;
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.history-container h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.word-text {
+  font-weight: 500;
+}
+
+.result-indicator {
+  font-size: 1.2rem;
+}
+
+.result-indicator.correct {
+  color: #42b983;
+}
+
+.result-indicator.incorrect {
+  color: #e74c3c;
 }
 
 .word-display {
