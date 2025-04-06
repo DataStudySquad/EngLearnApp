@@ -181,57 +181,79 @@ export default {
 
 <style scoped>
 .home {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2rem;
   display: flex;
-  gap: 2rem;
+  gap: 2.5rem;
+  min-height: 100vh;
+  background-color: #f5f7fa;
 }
 
 .practice-container {
   flex: 2;
   background-color: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.practice-container:hover {
+  transform: translateY(-2px);
 }
 
 .history-container {
   flex: 1;
   background-color: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   height: fit-content;
+  position: sticky;
+  top: 2rem;
 }
 
 .history-container h3 {
   margin-top: 0;
   color: #2c3e50;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
 }
 
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.8rem;
 }
 
 .history-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
+  padding: 1rem;
   background-color: #f8f9fa;
-  border-radius: 4px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.history-item:hover {
+  background-color: #f0f2f5;
+  transform: translateX(4px);
 }
 
 .word-text {
   font-weight: 500;
+  font-size: 1.2rem;
+  color: #2c3e50;
 }
 
 .result-indicator {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: bold;
 }
 
 .result-indicator.correct {
@@ -243,73 +265,102 @@ export default {
 }
 
 .word-display {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.word-display h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
 }
 
 .play-button {
   background-color: #42b983;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  padding: 1rem 2rem;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 1.1rem;
-  transition: background-color 0.3s;
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 auto;
+  min-width: 200px;
 }
 
 .play-button:disabled {
   background-color: #a8d5c2;
   cursor: not-allowed;
+  transform: none;
 }
 
 .play-button:not(:disabled):hover {
   background-color: #3aa876;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 185, 131, 0.2);
 }
 
 .input-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .word-input {
   width: 100%;
-  padding: 10px;
-  font-size: 1.1rem;
-  border: 2px solid #ddd;
-  border-radius: 4px;
+  padding: 1rem 1.2rem;
+  font-size: 1.3rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
   margin-bottom: 1rem;
+  transition: all 0.3s ease;
 }
 
 .word-input:focus {
   outline: none;
   border-color: #42b983;
+  box-shadow: 0 0 0 3px rgba(66, 185, 131, 0.1);
 }
 
 .submit-button {
   background-color: #4a90e2;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  padding: 1rem 2rem;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  width: 100%;
 }
 
 .submit-button:disabled {
   background-color: #a8c7e2;
   cursor: not-allowed;
+  transform: none;
 }
 
 .submit-button:not(:disabled):hover {
   background-color: #357abd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
 }
 
 .result-section {
-  margin: 1.5rem 0;
+  margin: 2rem 0;
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background-color: #f8f9fa;
 }
 
 .result-message {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 .correct {
@@ -322,24 +373,63 @@ export default {
 
 .correct-answer {
   color: #666;
-  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  margin-top: 0.8rem;
 }
 
 .controls {
-  margin-top: 2rem;
+  margin-top: 2.5rem;
+  text-align: center;
 }
 
 .next-button {
   background-color: #666;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  padding: 1rem 2rem;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  min-width: 200px;
 }
 
 .next-button:hover {
   background-color: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 102, 102, 0.2);
+}
+
+@media (max-width: 768px) {
+  .home {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .history-container {
+    position: static;
+    margin-top: 2rem;
+  }
+
+  .practice-container,
+  .history-container {
+    padding: 1.5rem;
+  }
+
+  .word-display h2 {
+    font-size: 1.8rem;
+  }
+
+  .play-button,
+  .submit-button,
+  .next-button {
+    font-size: 1.1rem;
+    padding: 0.8rem 1.5rem;
+  }
+
+  .word-input {
+    font-size: 1.1rem;
+    padding: 0.8rem 1rem;
+  }
 }
 </style> 
