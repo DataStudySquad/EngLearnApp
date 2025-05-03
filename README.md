@@ -15,6 +15,10 @@ git checkout -b <new_branch>
 
 ```
 
+## Todo
+- integrate with payment API
+- ios/android 1st version
+- create `chat with AI` as a practice mode
 
 ## Ref
 
